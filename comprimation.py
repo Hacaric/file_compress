@@ -69,12 +69,13 @@ def comprime(file, output_type, output_file = None, rewrite = False):
             output_file = ".".join(file.split(".")[:-1]) + ".cpm"
         try:
             try:
+                if rewrite:
+                    ""+0
                 while True:
-                    f = open(output_file, "x")
-                    if rewrite:
-                        ""+0
+                    open(output_file, "r")
                         #Throws error -> mean continue with filename you have, beacouse its free
                     print(f"Opperation failed: file {output_file} already exist. Saving results to {'_' + output_file}")
+                    output_file = "_" + output_file
             except:
                 print(f"Creating file: {output_file}")
                 f = open(output_file, "w").write(final_text)

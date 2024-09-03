@@ -30,11 +30,38 @@ def decode_by_pattern(text):
     for i in range(32, len_of_diff_char + 32):
         different_chars_list.append(text[i*8:(i+1)*8])
     comprimed_text = (text[len_of_diff_char * 8 + 32:])[text_offset-1:]
-    return ...
+    return different_chars_list, comprimed_text
+def decode(len_of_comprimed_char, comprimed_text, different_chars_list):
+    text = ""
+    for i in range(0, len(comprimed_text), len_of_comprimed_char):
+        text += different_chars_list[todec(comprimed_text[i:i+len_of_comprimed_char])]
+    return text
 def decomprime(file, output_type, output_file = None, rewrite = False):
     try:    
         text = open(file, "rt").read()
     except Exception as e:
         print("Error opening file. Aborting.")
         exit("Ext message: File_error")
-    text_offset, len_of_comprimed_char, len_of_diff_char, different_chars_list, comprimed_text
+    len_of_comprimed_char, different_chars_list, comprimed_text = decode_by_pattern(text)
+    decomprimed_text = decode(len_of_comprimed_char, comprimed_text, different_chars_list)
+    if output_type == "console":
+        print("Text:", decomprimed_text)
+    elif output_type == "file":
+        if not output_file:
+            output_file = ".".join(file.split(".")[:-1]) + ".txt"
+        try:
+            try:
+                if rewrite:
+                    ""+0
+                while True:
+                    open(output_file, "r")
+                        #Throws error -> mean continue with filename you have, beacouse its free
+                    print(f"Opperation failed: file {output_file} already exist. Saving results to {'_' + output_file}")
+                    output_file = "_" + output_file
+            except:
+                print(f"Creating file: {output_file}")
+                f = open(output_file, "w").write(decomprimed_text)
+                #f = open(output_file + "b", "wb").write(final_bin)
+        except Exception as e:
+            exit("Error, quitting: " + e)
+    return final_text
