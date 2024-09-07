@@ -1,4 +1,5 @@
 import math
+bytelen = 7
 def tobin(inpt, minimumlenght = None):
     if minimumlenght:
         return str(bin(int(inpt)))[2:].zfill(minimumlenght)
@@ -19,20 +20,27 @@ def get_app_version():
         print("Error while reading app version(check version.txt): " + str(e))
 def decode_by_pattern(text):
     # Test file version
-    version = todec(text[0:8])/100
-    if not version == get_app_version():
-        if not "y" == input(f"Your file's version({version}) is not the right. App version is {get_app_version()}. This can cause not right decompression of file. Try downloading older app version from github.\n\nDo you want to continue?(y/n) >> ")
+    version = todec(text[0:bytelen])/100
+    # print(version)
+    if not version == get_app_version()/100:
+        if not "y" == input(f"Your file's version({version}) is not the right. App version is {get_app_version()/100}. This can cause not right decompression of file. Try downloading older app version from github.\n\nDo you want to continue?(y/n) >> "):
             exit("Wrong version.")
-    text_offset = todec(text[8:16])
-    len_of_comprimed_char = todec(text[16:24])
-    len_of_diff_char = todec(text[24:32])
+    text_offset = todec(text[bytelen:bytelen*2])
+    # print("Text offset:", text_offset)
+    len_of_comprimed_char = todec(text[bytelen*2:bytelen*3])
+    len_of_diff_char = todec(text[bytelen*3:bytelen*4])
     different_chars_list = []
-    for i in range(32, len_of_diff_char + 32):
-        different_chars_list.append(text[i*8:(i+1)*8])
-    comprimed_text = (text[len_of_diff_char * 8 + 32:])[text_offset-1:]
-    return different_chars_list, comprimed_text
+    for i in range(bytelen*4, len_of_diff_char*bytelen + (4*bytelen), bytelen):
+        # print(f"Different char text[{i}:{i}+bytelen] or text[{i}:{i+bytelen}] is {text[i:i + bytelen]} or {chr(todec(text[i:i + bytelen]))}")
+        different_chars_list.append(chr(todec(text[i:i + bytelen])))
+        #print(chr(todec(text[i:i + bytelen])))
+    comprimed_text = text[len_of_diff_char*bytelen + (4*bytelen)+text_offset:]
+    return len_of_comprimed_char, different_chars_list, comprimed_text
 def decode(len_of_comprimed_char, comprimed_text, different_chars_list):
     text = ""
+    # print("Comprimed text:", comprimed_text)
+    # print("Different chars list:", different_chars_list, "line41")
+    # print("len_of_comprimed_char:", len_of_comprimed_char)
     for i in range(0, len(comprimed_text), len_of_comprimed_char):
         text += different_chars_list[todec(comprimed_text[i:i+len_of_comprimed_char])]
     return text
@@ -42,8 +50,14 @@ def decomprime(file, output_type, output_file = None, rewrite = False):
     except Exception as e:
         print("Error opening file. Aborting.")
         exit("Ext message: File_error")
+    #text="".join([tobin(ord(i),minimumlenght=bytelen) for i in list(text)])
+    # print("Text:", text)
     len_of_comprimed_char, different_chars_list, comprimed_text = decode_by_pattern(text)
+    # print("len_of_comprimed_char:", len_of_comprimed_char)
+    # print("different_chars_list:", different_chars_list)
+    # print("comprimed_text:", comprimed_text)
     decomprimed_text = decode(len_of_comprimed_char, comprimed_text, different_chars_list)
+    # print("Text:", decomprimed_text)
     if output_type == "console":
         print("Text:", decomprimed_text)
     elif output_type == "file":
@@ -64,4 +78,4 @@ def decomprime(file, output_type, output_file = None, rewrite = False):
                 #f = open(output_file + "b", "wb").write(final_bin)
         except Exception as e:
             exit("Error, quitting: " + e)
-    return final_text
+    return decomprimed_text
