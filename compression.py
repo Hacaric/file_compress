@@ -59,7 +59,7 @@ def force_text_from_binary(binary):
     for i in range(0, len(binary), bytelen):
         text += chr(todec(binary[i:i+bytelen]))
     return text
-def comprime(file, output_type, output_file = None, rewrite = False):
+def compress(file, output_type, output_file = None, rewrite = False):
     text = open(file, "rt").read()
     if not text:
         # print("File is empty. Aborting.")
@@ -88,16 +88,22 @@ def comprime(file, output_type, output_file = None, rewrite = False):
     # if len(final_bin) % bytelen != 0:
     #     exit("Error: final_bin is not dividable by bytelen (line 83)")
     # print("Vesrion:", version)
-    #final_text = force_text_from_binary(final_bin)
-    
+    final_text = force_text_from_binary(final_bin)
+    if not "".join([tobin(ord(i),minimumlenght=bytelen) for i in list(final_text)]) == final_bin:
+        exit("Error: final_text is not equal to final_bin")
+    print("Comprimed text:", final_text)
 
     if output_type == "console" or True:
         # print("Binary final:", final_bin)
         # print("Text:", final_text)
         pass
     if output_type == "file":
-        if not output_file:
-            output_file = ".".join(file.split(".")[:-1]) + ".cpm"
+        if output_file[-4] != ".cpm":
+            if output_file[-4] == ".":
+                output_file = output_file[:-4] + ".cpm"
+            else:
+                output_file += ".cpm"
+        print("Saving to file:", output_file)
         try:
             try:
                 if rewrite:
@@ -110,7 +116,8 @@ def comprime(file, output_type, output_file = None, rewrite = False):
             except:
                 # print(f"Writing to file: {output_file}")
                 # print(f"Binary: {final_bin}")
-                open(output_file, "w").write(final_bin)
+                f = open(output_file, "w")
+                f.write(final_text)
                 #f = open(output_file, "wb").write(final_text.encode("ascii"))
                 #f = open(output_file + "b", "wb").write(final_bin)
         except Exception as e:

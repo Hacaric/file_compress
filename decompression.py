@@ -44,13 +44,13 @@ def decode(len_of_comprimed_char, comprimed_text, different_chars_list):
     for i in range(0, len(comprimed_text), len_of_comprimed_char):
         text += different_chars_list[todec(comprimed_text[i:i+len_of_comprimed_char])]
     return text
-def decomprime(file, output_type, output_file = None, rewrite = False):
+def decompress(file, output_type, output_file = None, rewrite = False):
     try:    
         text = open(file, "rt").read()
     except Exception as e:
         print("Error opening file. Aborting.")
         exit("Ext message: File_error")
-    #text="".join([tobin(ord(i),minimumlenght=bytelen) for i in list(text)])
+    text="".join([tobin(ord(i),minimumlenght=bytelen) for i in list(text)])
     # print("Text:", text)
     len_of_comprimed_char, different_chars_list, comprimed_text = decode_by_pattern(text)
     # print("len_of_comprimed_char:", len_of_comprimed_char)
