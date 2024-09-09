@@ -1,0 +1,12 @@
+diff_chars = [Find how many not same characters are in list.]
+version = [Bianry representation of app version(*100, beacouse I dont want to get decimal nums into binary.)]
+comprimed_text = Bianry representation of file content, but instead of unicode indexes are used indexes from diff_chars
+len_of_comprimed_char = How long is one comprimed character in binary? Answer is: log2(len(diff_chars))
+
+final_bin = 
+version + 
+comprimed_text_offset +     #Note: comprimed_text may not be at lenght dividable by 8. Free space is filled with zeros and this is something like pointer to place, where it starts.
+len_of_comprimed_char + 
+len(diff_chars) +           #Note: all this in binary
+diff_chars +
+comprimed_text              #Note: Actual code is tolendividableby8("".join(comprimed_text))
