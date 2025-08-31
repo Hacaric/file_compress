@@ -1,1 +1,1 @@
-Bassically inefficient version of LZ.
+Bassically inefficient version of Huffman codings.
